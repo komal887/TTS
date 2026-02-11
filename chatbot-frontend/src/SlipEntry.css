@@ -1,0 +1,102 @@
+/* Container */
+.slip-container {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Headings */
+.slip-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #1f2937;
+}
+
+.slip-container h3 {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  color: #374151;
+}
+
+/* Inputs */
+.slip-input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.slip-input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* Item row */
+.item-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* Buttons */
+.primary-btn {
+  background: #2563eb;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.primary-btn:hover {
+  background: #1e40af;
+}
+
+.secondary-btn {
+  background: #e5e7eb;
+  color: #111827;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.secondary-btn:hover {
+  background: #d1d5db;
+}
+
+/* Result box */
+.result-box {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f0fdf4;
+  border-left: 5px solid #16a34a;
+  border-radius: 10px;
+}
+
+.result-box p {
+  margin: 6px 0;
+}
+
+.copy-btn {
+  margin-top: 10px;
+  background: #16a34a;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background: #15803d;
+}

@@ -1,0 +1,906 @@
+/* --------------------------------------------------
+   GLOBAL THEME — MATCHES HOMEPAGE (STYLE C)
+-------------------------------------------------- */
+:root {
+  --bg-soft: #f4f6f9;
+  --white: #ffffff;
+  --border: #e3e8ef;
+  --text-dark: #1e293b;
+  --text-light: #475569;
+  --blue: #0b5ed7;
+  --blue-dark: #004aad;
+  --shadow: 0 4px 12px rgba(0,0,0,0.05);
+  --radius: 12px;
+  --transition: 0.25s ease;
+}
+
+/* Remove all black backgrounds */
+html,
+body,
+#root {
+  height: 100%;
+  background: var(--bg-soft);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  color: var(--text-dark);
+}
+
+/* Full wrapper */
+.app-root {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg-soft);
+}
+
+/* --------------------------------------------------
+   SIDEBAR (Style C)
+-------------------------------------------------- */
+.sidebar-panel {
+  width: 280px;
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+.sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.new-chat {
+  background: var(--blue);
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+.new-chat:hover {
+  background: var(--blue-dark);
+}
+
+.close-sidebar {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+}
+
+/* List */
+.sidebar-list {
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.sidebar-item {
+  background: var(--white);
+  border: 1px solid transparent;
+  padding: 12px;
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  transition: var(--transition);
+}
+
+.sidebar-item:hover {
+  background: #f8fbff;
+  border-color: var(--border);
+}
+
+.sidebar-item.active {
+  border: 1px solid var(--blue);
+  background: #eef4ff;
+}
+
+.title {
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+.menu-pop {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  position: absolute;
+  z-index: 999;
+  right: 0;
+  top: 34px;
+  padding: 4px;
+}
+
+/* Footer */
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-footer .avatar {
+  width: 38px;
+  height: 38px;
+  background: var(--blue);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+/* --------------------------------------------------
+   CHAT AREA (white card-like layout)
+-------------------------------------------------- */
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-soft);
+}
+
+/* Header */
+.chat-top {
+  height: 64px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  align-items: center;
+  box-shadow: var(--shadow);
+}
+
+/* Messages */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Empty state */
+.empty-state {
+  height: 65vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-light);
+}
+
+/* --------------------------------------------------
+   MESSAGE BUBBLES
+-------------------------------------------------- */
+.msg-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.msg-row.user {
+  flex-direction: row-reverse;
+}
+
+/* Avatar */
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: var(--blue);
+  color: white;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Bubble */
+.bubble {
+  background: var(--white);
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  color: var(--text-dark);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  max-width: 75%;
+  position: relative;
+}
+
+.msg-row.user .bubble {
+  background: var(--blue);
+  color: white;
+  border-color: transparent;
+}
+
+/* Copy icon animation */
+.bubble-copy {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 6px;
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: var(--transition);
+}
+
+.msg-row:hover .bubble-copy {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* View Chart Button */
+.view-chart-line {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.view-chart-inline {
+  background: var(--blue);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.view-chart-inline:hover {
+  background: var(--blue-dark);
+}
+
+/* --------------------------------------------------
+   COMPOSER (input)
+-------------------------------------------------- */
+.composer {
+  background: var(--white);
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  box-shadow: var(--shadow);
+}
+
+.chat-textarea {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  resize: none;
+  background: var(--white);
+  color: var(--text-dark);
+}
+
+.chat-textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(11,94,215,0.15);
+}
+
+.send {
+  background: var(--blue);
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.send:hover {
+  background: var(--blue-dark);
+}
+
+/* --------------------------------------------------
+   REVIEW PANEL (Chart Preview)
+-------------------------------------------------- */
+.review-split {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  background: var(--white);
+  border-left: 1px solid var(--border);
+  box-shadow: -4px 0px 12px rgba(0,0,0,0.08);
+  display: flex;
+  transition: width var(--transition);
+}
+
+.review-panel-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
+
+.review-body {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.review-img {
+  width: 90%;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* Drag handle */
+.review-handle {
+  width: 12px;
+  cursor: col-resize;
+  background: #f0f2f5;
+}
+
+.review-handle:hover {
+  background: #e0e4ea;
+}
+
+/* Overlay clicking */
+.review-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.06);
+}
+
+/* ---------------------- MOBILE ---------------------- */
+@media (max-width: 900px) {
+  .sidebar-panel {
+    display: none;
+  }
+
+  .review-split {
+    width: 100% !important;
+  }
+
+  .bubble {
+    max-width: 100%;
+  }
+}
+
+/* ---------------- Additional Sidebar & menu styling ---------------- */
+
+/* small square icon button used for menu / collapse */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--text-dark);
+  transition: background var(--transition), transform .12s ease, box-shadow .12s ease;
+  box-shadow: none;
+  font-size: 14px;
+}
+.icon:hover {
+  background: #f1f8ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(2,6,23,0.04);
+}
+
+/* three-dot menu icon inside the square */
+.icon svg {
+  stroke: var(--text-dark);
+}
+
+/* ensure the menu-pop sits next to the square and has the desired look */
+.menu-pop {
+  min-width: 160px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: absolute;
+  right: 8px;
+  top: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.06);
+  z-index: 120;
+}
+
+/* each menu item inside the popup */
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-dark);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background .12s ease, color .12s ease;
+}
+.menu-item:hover {
+  background: #eef4ff;
+  color: var(--blue-dark);
+}
+
+/* style for the small 'x' close button in header */
+.close-sidebar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+  border:1px solid var(--border);
+  color:var(--text-light);
+  cursor:pointer;
+  transition:transform .12s ease, background .12s ease, box-shadow .12s;
+}
+.close-sidebar:hover {
+  background:#f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+}
+
+/* selected chat "pill" look (blue outline and subtle bg) */
+.sidebar-item.active {
+  border: 1px solid var(--blue);
+  background: linear-gradient(180deg, #f6fbff, #eef6ff);
+  box-shadow: 0 6px 18px rgba(11,94,215,0.06);
+}
+
+/* make the input/rename field blend with card look */
+.rename-input {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-dark);
+  outline: none;
+}
+.rename-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 6px 18px rgba(11,94,215,0.08);
+}
+
+/* fix for the chat title pill (when long) */
+.sidebar-item .title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 56px);
+}
+
+/* tidy the footer area spacing so there is no visual gap */
+.sidebar-footer {
+  padding: 16px;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* small mobile-friendly tweak: when sidebar is hidden keep the thin icon bar clean */
+.sidebar-panel.collapsed,
+.sidebar-panel.mobile:not(.show) {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* make the sidebar scroll nicely and hide default scroll visuals */
+.sidebar-list {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.sidebar-list::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar-list::-webkit-scrollbar-thumb {
+  background: #d6e4ff;
+  border-radius: 10px;
+}
+
+/* Ensure menu-pop doesn't overflow off-screen on narrow windows */
+@media (max-width: 420px) {
+  .menu-pop { right: 6px; left: 6px; top: 44px; min-width: auto; }
+}
+
+/* final polish: ensure the three dot button doesn't show text */
+.icon > svg, .icon > i { display: inline-block; vertical-align: middle; }
+
+/* FIX: Sidebar chat title should always be visible */
+.sidebar-item .title {
+  color: #0f172a !important;     /* dark text */
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ------- FIX SIDEBAR FOOTER POSITION + SIZE ------- */
+
+.sidebar-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-list {
+  flex: 1;                 /* pushes footer to bottom */
+  overflow-y: auto;
+}
+
+/* Compact footer */
+.sidebar-footer {
+  padding: 10px 14px;      /* smaller padding */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  flex-shrink: 0;          /* ensure it never grows */
+  min-height: 60px;        /* smaller height */
+}
+
+/* Avatar */
+.sidebar-footer .avatar {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+}
+
+/* Text spacing fix */
+.sidebar-footer .acct .name {
+  margin-bottom: -2px;
+  font-size: 14px;
+}
+
+.sidebar-footer .acct .sub {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* FIX: sidebar chat titles getting cut off */
+.sidebar-item .title {
+  font-size: 15px;
+  line-height: 20px;      /* ensures full height */
+  height: auto;
+  padding: 4px 0;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure the left side expands naturally */
+.sidebar-item .left {
+  display: flex;
+  align-items: center;
+  height: auto;
+}
+
+/* Fix parent too-small height */
+.sidebar-item {
+  min-height: 48px;       /* this fixes the clipping */
+  align-items: center;
+}
+
+.sidebar-item .left {
+  flex: 1;
+  overflow: visible;
+}
+
+.sidebar-item .title {
+  flex: 1;
+  overflow: visible;
+  display: block;
+  padding-right: 32px; /* prevents overlap with 3-dot menu */
+  color: #0f172a;
+}
+
+.sidebar-item .right {
+  flex-shrink: 0;      /* prevent it from squeezing title */
+  position: relative;
+  z-index: 10;         /* keep the menu button above */
+}
+
+.sidebar-item {
+  align-items: center;
+  display: flex;
+  min-height: 48px;
+}
+
+/* ================================
+   CHART PREVIEW PANEL (TTS STYLE)
+   ================================ */
+
+.preview-card {
+  background: #ffffff;
+  border-left: 1px solid #e2e8f0;
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+  border-radius: 0;
+  animation: slideInRight 0.25s ease;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(30px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+/* ⭐ NAVBAR HEADER MATCHING HOME PAGE */
+.preview-header {
+  background: linear-gradient(90deg, #eef5ff, #ffffff);
+  border-bottom: 1px solid #e1e7ef;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preview-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0b4f6c;
+}
+
+/* ACTION ICONS */
+.preview-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.preview-actions .icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #0b5ed7;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.15s, transform 0.2s;
+}
+
+.preview-actions .icon-btn:hover {
+  background: #e6f0ff;
+  transform: translateY(-2px);
+}
+
+.preview-actions .close-btn {
+  color: #e11d48;
+}
+
+/* ⭐ CARD BODY (MATCHES HOME CARDS) */
+.preview-body {
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.preview-img {
+  width: 90%;
+  max-width: 650px;
+  border-radius: 12px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.08);
+  border: 1px solid #eef2f7;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.preview-empty {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  .preview-card {
+    width: 100% !important;
+    border-radius: 0;
+  }
+}
+
+/* ---------------------------------------
+   FIX: Sidebar Chat Title Box Alignment
+---------------------------------------- */
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #d7e3ff;
+  transition: background 0.15s ease, border 0.15s ease;
+  cursor: pointer;
+}
+
+.sidebar-item.active {
+  border: 2px solid #2563eb !important;
+  background: #f0f6ff;
+}
+
+/* Title container */
+.sidebar-item .left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* FIX: DOT stays aligned */
+.sidebar-item .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  margin-right: 10px;
+}
+
+/* FIX: Text does NOT push menu out */
+.sidebar-item .title {
+  font-size: 14px;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* FIX: Three dot button STAYS inside box */
+.sidebar-item .right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f8f9ff;
+  border: 1px solid #e2e8f0;
+  transition: background 0.15s ease;
+}
+
+.sidebar-item .right:hover {
+  background: #e8efff;
+}
+
+/* Smaller, compact chat title box */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;      /* ⬅️ Reduced padding */
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #d7e3ff;
+  cursor: pointer;
+  height: 44px;           /* ⬅️ Fixed small height */
+}
+
+/* Left section stays same */
+.sidebar-item .left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+/* Dot */
+.sidebar-item .dot {
+  width: 8px;
+  height: 8px;
+  background: #cbd5e1;
+  border-radius: 50%;
+}
+
+/* Text stays inside */
+.sidebar-item .title {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Right: 3-dot button */
+.sidebar-item .right {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f6ff;
+  border: 1px solid #e2e8f0;
+}
+
+.sidebar-item .right:hover {
+  background: #e8edff;
+}
+
+/* Sidebar item container */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  height: 48px;
+  border: 1px solid #d7e3ff;
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+/* Left section stays fixed width */
+.sidebar-item .left {
+  flex: 1;                      /* <-- This makes left side fixed */
+  min-width: 0;                /* <- allows ellipsis properly */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Dot */
+.sidebar-item .dot {
+  width: 8px;
+  height: 8px;
+  background: #cbd5e1;
+  border-radius: 50%;
+}
+
+/* FIX: Title stays inside space, no pushing */
+.sidebar-item .title {
+  flex: 1;
+  font-size: 14px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;     /* <-- important */
+}
+
+/* FIX: Right side is FIXED width & never moves */
+.sidebar-item .right {
+  width: 36px;                /* <-- fixed */
+  height: 36px;               /* <-- fixed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f6ff;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;             /* <-- SUPER IMPORTANT! prevents shrinking */
+}
+
+.sidebar-item .right:hover {
+  background: #e8edff;
+}
+
+
+

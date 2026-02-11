@@ -1,0 +1,59 @@
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "./Signup.css";
+
+function Signup() {
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    console.log("Form sent to backend:", form); // ✅ Debug line
+
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/signup", form);
+      alert(res.data.message);
+      navigate("/"); // Redirect to chatbot
+    } catch (err) {
+      console.log("Signup error:", err); // Show backend error
+      alert(err.response?.data?.detail || "Signup failed");
+    }
+  };
+
+  return (
+    <div className="signup-container">
+      <h2>Sign Up</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          name="username"
+          placeholder="Username"
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          onChange={handleChange}
+          required
+        />
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+  );
+}
+
+export default Signup;
