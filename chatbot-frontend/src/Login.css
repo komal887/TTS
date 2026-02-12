@@ -81,3 +81,26 @@
     padding: 1.5rem;
   }
 }
+
+
+/* Responsive-extra*/
+
+.login-card {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 350px;
+  margin: auto;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.error-text {
+  color: red;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.redirect-text {
+  margin-top: 15px;
+  font-size: 14px;
+}

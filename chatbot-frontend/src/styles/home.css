@@ -1,0 +1,114 @@
+/* ===========================
+   HOME PAGE — Clean & Modern
+   =========================== */
+
+.home-page {
+  width: 100%;
+  padding: 40px 50px;
+}
+
+@media (max-width: 900px) {
+  .home-page {
+    padding: 24px;
+  }
+}
+
+/* -------- HEADER -------- */
+.home-header {
+  width: 100%;
+  background: linear-gradient(90deg, #ffffff, #eef5ff);
+  padding: 40px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.home-header h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin: 0;
+  padding-left: 10px;
+}
+
+.home-header .tagline {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  padding-left: 10px;
+}
+
+/* -------- CARD GRID -------- */
+.home-card-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 26px;
+  margin-top: 40px;
+}
+
+@media (max-width: 1000px) {
+  .home-card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .home-card-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -------- INDIVIDUAL CARD -------- */
+.home-card {
+  background: var(--white);
+  padding: 26px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  color: var(--text-dark);
+  text-decoration: none;
+  transition: 0.25s ease;
+}
+
+.home-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+.home-card .icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.home-card h2 {
+  font-size: 20px;
+  color: var(--primary-dark);
+  margin: 6px 0;
+}
+
+.home-card p {
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+
+/* -------- Login and Sign Up Buttons -------- */
+
+.auth-buttons {
+  margin-top: 20px;
+}
+
+.auth-btn {
+  padding: 10px 18px;
+  margin: 0 10px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.login-btn {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.signup-btn {
+  background-color: #27ae60;
+  color: white;
+}

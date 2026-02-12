@@ -1,0 +1,110 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, #f8fafc, #eef3fb);
+  color: #1e293b;
+  margin: 0;
+}
+
+/* --------------------------
+   REPORT PAGE ONLY — NO NAVBAR STYLES HERE
+--------------------------- */
+
+/* 🔹 Main Content */
+.report-main {
+  max-width: 1100px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+.report-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.report-header h1 {
+  font-size: 28px;
+  color: #0b4f6c;
+}
+
+.report-header p {
+  color: #475569;
+  font-size: 16px;
+  max-width: 700px;
+  margin: 10px auto;
+}
+
+/* 🔹 Cards */
+.report-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.report-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+
+.report-card:hover {
+  transform: translateY(-4px);
+}
+
+.report-card h2 {
+  color: #004aad;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.report-card p {
+  color: #475569;
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+
+.btn {
+  display: inline-block;
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  background: linear-gradient(90deg, #1d4ed8, #1e40af);
+}
+
+/* 🔹 Disclaimer (if used) */
+.disclaimer {
+  background: rgba(255, 255, 255, 0.85);
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  margin-bottom: 40px;
+}
+
+.disclaimer h3 {
+  color: #0b4f6c;
+  margin-bottom: 10px;
+}
+
+.disclaimer p {
+  color: #475569;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* 🔹 Footer */
+.footer {
+  text-align: center;
+  margin: 40px 0 20px;
+  font-size: 13px;
+  color: #64748b;
+}

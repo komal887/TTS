@@ -5,12 +5,14 @@ from pydantic import BaseModel, EmailStr
 from pymongo import MongoClient
 import bcrypt
 from datetime import datetime
-from nlp_query import smart_tax_flow, load_data
+from nlp_query import smart_tax_flow
 import base64
 
 app = FastAPI(title="Tax Allocation Chatbot + Signup API")
 
-# FIXED CORS MIDDLEWARE
+# ------------------------------------------------------------
+# CORS
+# ------------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,34 +22,20 @@ app.add_middleware(
 )
 
 # ------------------------------------------------------------
-# MONGODB CONNECTION
+# MONGODB
 # ------------------------------------------------------------
 client = MongoClient("mongodb://localhost:27017")
 db = client["user_db"]
 users = db["users"]
 
 # ------------------------------------------------------------
-# PASSWORD HASHING (USING bcrypt ONLY — NO PASSLIB)
+# PASSWORD HASHING
 # ------------------------------------------------------------
 def hash_password(password: str) -> str:
-    password_bytes = password.encode("utf-8")
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password_bytes, salt)
-    return hashed.decode("utf-8")
-
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
-
-# ------------------------------------------------------------
-# LOAD CHATBOT DATA
-# ------------------------------------------------------------
-try:
-    allocation_data, tax_data = load_data()
-    print("✅ JSON data loaded successfully.")
-except Exception as e:
-    print("❌ Error loading JSON data:", e)
-    allocation_data, tax_data = {}, {}
+    return bcrypt.checkpw(plain.encode(), hashed.encode())
 
 # ------------------------------------------------------------
 # MODELS
@@ -60,39 +48,53 @@ class Signup(BaseModel):
 class UserMessage(BaseModel):
     message: str
 
+class LoginModel(BaseModel):
+    email: EmailStr
+    password: str
+
 # ------------------------------------------------------------
-# SIGNUP ROUTE
+# SIGNUP
 # ------------------------------------------------------------
 @app.post("/signup")
 def signup(user: Signup):
-
-    # Check if email exists
     if users.find_one({"email": user.email}):
         raise HTTPException(status_code=400, detail="Email already registered")
-
-    hashed_pw = hash_password(user.password)
 
     users.insert_one({
         "username": user.username,
         "email": user.email,
-        "password": hashed_pw,
+        "password": hash_password(user.password),
         "created_at": datetime.utcnow()
     })
 
     return {"message": "Signup successful!"}
 
 # ------------------------------------------------------------
-# CHATBOT ROUTE
+# LOGIN
+# ------------------------------------------------------------
+@app.post("/login")
+def login(user: LoginModel):
+    existing_user = users.find_one({"email": user.email})
+    if not existing_user:
+        raise HTTPException(status_code=400, detail="Email not registered")
+
+    if not verify_password(user.password, existing_user["password"]):
+        raise HTTPException(status_code=400, detail="Incorrect password")
+
+    return {"message": "Login successful!"}
+
+# ------------------------------------------------------------
+# CHATBOT
 # ------------------------------------------------------------
 @app.post("/api/chat")
 def get_chat_response(user: UserMessage):
     try:
-        chart_buf, summary = smart_tax_flow(user.message, allocation_data, tax_data)
+        chart_buf, summary = smart_tax_flow(user.message)
 
-        if chart_buf:
-            chart_base64 = base64.b64encode(chart_buf.getvalue()).decode("utf-8")
-        else:
-            chart_base64 = None
+        chart_base64 = (
+            base64.b64encode(chart_buf.getvalue()).decode("utf-8")
+            if chart_buf else None
+        )
 
         return JSONResponse({
             "summary": summary,
@@ -101,33 +103,14 @@ def get_chat_response(user: UserMessage):
 
     except Exception as e:
         print("❌ Backend Error:", e)
-        return JSONResponse({"summary": "Error processing request.", "chart": None})
+        return JSONResponse({
+            "summary": "Error processing request.",
+            "chart": None
+        })
 
 # ------------------------------------------------------------
-# ROOT ENDPOINT
+# ROOT
 # ------------------------------------------------------------
 @app.get("/")
 def root():
     return {"message": "Welcome to the Tax Chatbot + Signup API"}
-
-
-# ------------------------------------------------------------
-# LOGIN ROUTE
-# ------------------------------------------------------------
-class LoginModel(BaseModel):
-    email: EmailStr
-    password: str
-
-@app.post("/login")
-def login(user: LoginModel):
-    # Check if user exists
-    existing_user = users.find_one({"email": user.email})
-    if not existing_user:
-        raise HTTPException(status_code=400, detail="Email not registered")
-
-    # Verify password
-    hashed_pw = existing_user["password"]
-    if not verify_password(user.password, hashed_pw):
-        raise HTTPException(status_code=400, detail="Incorrect password")
-
-    return {"message": "Login successful!"}
