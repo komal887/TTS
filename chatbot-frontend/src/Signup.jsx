@@ -4,7 +4,12 @@ import { useNavigate } from "react-router-dom";
 import "./Signup.css";
 
 function Signup() {
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: ""
+  });
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -14,14 +19,14 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Form sent to backend:", form); // ✅ Debug line
-
     try {
       const res = await axios.post("http://127.0.0.1:8000/signup", form);
       alert(res.data.message);
-      navigate("/"); // Redirect to chatbot
+
+      // ✅ After signup go to login page
+      navigate("/login");
+
     } catch (err) {
-      console.log("Signup error:", err); // Show backend error
       alert(err.response?.data?.detail || "Signup failed");
     }
   };

@@ -11,15 +11,6 @@ export default function Home() {
         <p className="tagline">
           Explore India's national expenditure in a transparent and simple way.
         </p>
-
-        <div className="auth-buttons">
-    <Link to="/login" className="auth-btn login-btn">
-      Login
-    </Link>
-    <Link to="/signup" className="auth-btn signup-btn">
-      Sign Up
-    </Link>
-  </div>
   
       </section>
 
@@ -49,30 +40,7 @@ export default function Home() {
           <p>Compare allocations across years & ministries.</p>
         </Link>
       </main>
-      <footer className="footer">
-      <div className="footer-content">
-        <p>
-          <strong>Tax Transparency System (TTS)</strong> — A citizen initiative for transparent public finance.
-        </p>
-
-        <p className="footer-links">
-          <Link to="/report">Official Reports</Link> |{" "}
-          <a
-            href="https://www.indiabudget.gov.in"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Union Budget Portal
-          </a>{" "}
-          | <Link to="/about">About</Link> | <Link to="/contact">Contact</Link>
-        </p>
-
-        <small>
-          © 2025 Tax Transparency System | Government of India Data Sources
-        </small>
-      </div>
-    </footer>
-
+     
     </div>
   );
 }

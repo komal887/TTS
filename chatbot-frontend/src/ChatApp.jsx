@@ -1,12 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Sidebar from "./Sidebar";
 import ChatArea from "./ChatArea";
 import Toast from "./Toast";
-import SlipEntry from "./SlipEntry"; // ✅ NEW (added)
-import { Download, Copy } from "lucide-react";
+import SlipEntry from "./SlipEntry";
 import "./App.css";
-
-const STORAGE_KEY = "tts_chat_storage_v1";
 
 export default function ChatApp() {
   const [chats, setChats] = useState([]);
@@ -14,68 +12,94 @@ export default function ChatApp() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [activeChart, setActiveChart] = useState(null);
-  const [reviewWidthPct, setReviewWidthPct] = useState(50);
   const [toast, setToast] = useState(null);
+  const [viewMode, setViewMode] = useState("chat");
 
-  // ✅ NEW STATE (added safely)
-  const [viewMode, setViewMode] = useState("chat"); // "chat" | "slip"
+  const userEmail = localStorage.getItem("userEmail");
 
-  const dragRef = useRef(false);
-
-  // ---------------- Load from localStorage ----------------
+  // --------------------------------------------------
+  // LOAD USER CHATS FROM BACKEND
+  // --------------------------------------------------
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const storedChats = parsed.chats || [];
+    if (!userEmail) return;
 
-        if (storedChats.length === 0) {
-          const id = Date.now();
-          const seed = { id, title: "New chat", messages: [] };
-          setChats([seed]);
-          setActiveChatId(id);
+    const fetchChats = async () => {
+      try {
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/chats/${userEmail}`
+        );
+
+        const backendChats = res.data;
+
+        if (backendChats.length === 0) {
+          createChat();
         } else {
-          setChats(storedChats);
-          setActiveChatId(parsed.activeChatId ?? storedChats[0]?.id ?? null);
+          setChats(backendChats);
+          setActiveChatId(backendChats[0].id);
         }
-
-        setSidebarVisible(parsed.sidebarVisible ?? true);
-        setReviewWidthPct(parsed.reviewWidthPct ?? 50);
-      } else {
-        const id = Date.now();
-        const seed = { id, title: "New chat", messages: [] };
-        setChats([seed]);
-        setActiveChatId(id);
+      } catch (err) {
+        console.error("Failed to load chats:", err);
       }
-    } catch (err) {
-      localStorage.removeItem(STORAGE_KEY);
-    }
-  }, []);
+    };
 
-  // ---------------- Save to localStorage ----------------
-  useEffect(() => {
+    fetchChats();
+  }, [userEmail]);
+
+  // --------------------------------------------------
+  // CREATE CHAT
+  // --------------------------------------------------
+  const createChat = async () => {
     try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ chats, activeChatId, sidebarVisible, reviewWidthPct })
+      const res = await axios.post(
+        "http://127.0.0.1:8000/api/chat/create",
+        { email: userEmail }
       );
-    } catch {}
-  }, [chats, activeChatId, sidebarVisible, reviewWidthPct]);
 
-  // ---------------- Helpers ----------------
-  const createChat = () => {
-    const id = Date.now();
-    const chat = { id, title: "New chat", messages: [] };
-    setChats((s) => [chat, ...s]);
-    setActiveChatId(id);
+      const newChat = {
+        id: res.data.chat_id,
+        title: "New chat",
+        messages: [],
+      };
+
+      setChats((prev) => [newChat, ...prev]);
+      setActiveChatId(newChat.id);
+    } catch (err) {
+      console.error("Create chat error:", err);
+    }
   };
 
+  // --------------------------------------------------
+  // DELETE CHAT
+  // --------------------------------------------------
+  const deleteChat = async (id) => {
+    try {
+      await axios.delete(
+        `http://127.0.0.1:8000/api/chat/${id}`
+      );
+
+      setChats((prev) =>
+        prev.filter((c) => c.id !== id)
+      );
+
+      if (activeChatId === id) {
+        setActiveChatId(null);
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+    }
+  };
+
+  // --------------------------------------------------
+  // UPDATE CHAT LOCALLY
+  // --------------------------------------------------
   const appendToActive = (message) => {
     setChats((prev) =>
       prev.map((c) =>
         c.id === activeChatId
-          ? { ...c, messages: [...(c.messages || []), message] }
+          ? {
+              ...c,
+              messages: [...(c.messages || []), message],
+            }
           : c
       )
     );
@@ -83,97 +107,33 @@ export default function ChatApp() {
 
   const updateActive = (patch) => {
     setChats((prev) =>
-      prev.map((c) => (c.id === activeChatId ? { ...c, ...patch } : c))
+      prev.map((c) =>
+        c.id === activeChatId
+          ? { ...c, ...patch }
+          : c
+      )
     );
   };
 
-  const renameChat = (id, title) =>
-    setChats((prev) => prev.map((c) => (c.id === id ? { ...c, title } : c)));
+  const activeChat =
+    chats.find((c) => c.id === activeChatId) ?? null;
 
-  const deleteChat = (id) => {
-    setChats((prev) => {
-      const next = prev.filter((c) => c.id !== id);
-      if (activeChatId === id) setActiveChatId(next[0]?.id ?? null);
-      return next;
-    });
-  };
-
-  const openReviewWithChart = (chartUri) => {
-    if (!chartUri) {
-      setToast({ text: "No chart available", type: "error" });
-      return;
-    }
-    setActiveChart(chartUri);
-    setReviewOpen(true);
-    setSidebarVisible(false);
-  };
-
-  const closeReview = () => {
-    setReviewOpen(false);
-    setActiveChart(null);
-    setTimeout(() => setSidebarVisible(true), 200);
-  };
-
-  const copyActiveChat = async () => {
-    const active = chats.find((c) => c.id === activeChatId);
-    if (!active) return;
-
-    const text = (active.messages || [])
-      .map((m) => `${m.role === "user" ? "You" : "Bot"}: ${m.text}`)
-      .join("\n\n");
-
-    try {
-      await navigator.clipboard.writeText(text);
-      setToast({ text: "Copied chat", type: "success" });
-    } catch {
-      setToast({ text: "Copy failed", type: "error" });
-    }
-  };
-
-  const downloadChart = () => {
-    if (!activeChart) return;
-    const a = document.createElement("a");
-    a.href = activeChart;
-    a.download = "Tax_Chart.png";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  };
-
-  const activeChat = chats.find((c) => c.id === activeChatId) ?? null;
-
-  // ---------------- Draggable Resize ----------------
-  const startDrag = () => (dragRef.current = true);
-
-  const onDrag = (e) => {
-    if (!dragRef.current) return;
-    const pct = ((window.innerWidth - e.clientX) / window.innerWidth) * 100;
-    if (pct > 25 && pct < 75) setReviewWidthPct(pct);
-  };
-
-  const stopDrag = () => (dragRef.current = false);
-
-  useEffect(() => {
-    window.addEventListener("mousemove", onDrag);
-    window.addEventListener("mouseup", stopDrag);
-    return () => {
-      window.removeEventListener("mousemove", onDrag);
-      window.removeEventListener("mouseup", stopDrag);
-    };
-  }, []);
-
-  // ---------------- UI ----------------
+  // --------------------------------------------------
+  // UI
+  // --------------------------------------------------
   return (
     <div className="app-root">
 
-      {/* ✅ SIMPLE MODE TOGGLE (added safely) */}
+      {/* Mode Toggle */}
       <div style={{ position: "fixed", top: 10, right: 20, zIndex: 1000 }}>
         <button
           onClick={() =>
             setViewMode(viewMode === "chat" ? "slip" : "chat")
           }
         >
-          {viewMode === "chat" ? "Open Slip Entry" : "Back to Chatbot"}
+          {viewMode === "chat"
+            ? "Open Slip Entry"
+            : "Back to Chatbot"}
         </button>
       </div>
 
@@ -187,78 +147,77 @@ export default function ChatApp() {
               activeChatId={activeChatId}
               onSelect={(id) => setActiveChatId(id)}
               onNew={createChat}
-              onRename={(id, t) => renameChat(id, t)}
-              onDelete={(id) => deleteChat(id)}
-              toggle={() => setSidebarVisible((s) => !s)}
+              onRename={(id, t) =>
+                setChats((prev) =>
+                  prev.map((c) =>
+                    c.id === id
+                      ? { ...c, title: t }
+                      : c
+                  )
+                )
+              }
+              onDelete={deleteChat}
+              toggle={() =>
+                setSidebarVisible((s) => !s)
+              }
               isMobile={window.innerWidth <= 920}
             />
           )}
 
           <ChatArea
             chat={activeChat}
-            append={(msg) => appendToActive(msg)}
-            updateActive={(patch) => updateActive(patch)}
-            openReview={(chartUri) => openReviewWithChart(chartUri)}
+            chatId={activeChatId}
+            append={appendToActive}
+            updateActive={updateActive}
+            openReview={(chartUri) => {
+              setActiveChart(chartUri);
+              setReviewOpen(true);
+            }}
             setToast={setToast}
-            toggleSidebar={() => setSidebarVisible((s) => !s)}
+            toggleSidebar={() =>
+              setSidebarVisible((s) => !s)
+            }
           />
 
-          {/* ---------------- CHART REVIEW PANEL ---------------- */}
+          {/* ---------------- CHART PREVIEW ---------------- */}
           {reviewOpen && (
             <>
-              <div className="review-overlay" onClick={closeReview} />
-
               <div
-                className="review-split preview-card"
-                style={{ width: `${reviewWidthPct}%` }}
-              >
-                <div
-                  className="review-handle"
-                  onMouseDown={startDrag}
-                  title="Resize panel"
-                />
+                className="review-overlay"
+                onClick={() => setReviewOpen(false)}
+              />
 
-                <div className="review-panel-inner">
-                  <div className="preview-header">
-                    <h3>Chart Preview</h3>
+              <div className="review-split preview-card">
+                <div className="preview-header">
+                  <h3>Chart Preview</h3>
 
-                    <div className="preview-actions">
-                      <button className="icon-btn" onClick={copyActiveChat}>
-                        <Copy size={16} />
-                      </button>
+                  <button
+                    className="icon-btn"
+                    onClick={() => setReviewOpen(false)}
+                  >
+                    ✖
+                  </button>
+                </div>
 
-                      <button className="icon-btn" onClick={downloadChart}>
-                        <Download size={16} />
-                      </button>
-
-                      <button
-                        className="icon-btn close-btn"
-                        onClick={closeReview}
-                      >
-                        ✖
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="preview-body">
-                    {activeChart ? (
-                      <img
-                        src={activeChart}
-                        className="preview-img"
-                        alt="chart"
-                      />
-                    ) : (
-                      <div className="preview-empty">
-                        No chart available
-                      </div>
-                    )}
-                  </div>
+                <div className="preview-body">
+                  {activeChart ? (
+                    <img
+                      src={activeChart}
+                      className="preview-img"
+                      alt="chart"
+                    />
+                  ) : (
+                    <div>No chart available</div>
+                  )}
                 </div>
               </div>
             </>
           )}
 
-          <Toast toast={toast} onClose={() => setToast(null)} />
+          <Toast
+            toast={toast}
+            onClose={() => setToast(null)}
+          />
         </>
       )}
     </div>

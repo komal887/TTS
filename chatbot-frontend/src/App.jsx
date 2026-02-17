@@ -1,10 +1,17 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation
+} from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 import Home from "./pages/Home";
 import Allocation from "./pages/Allocation";
+import Comparison from "./pages/Comparison";
 import Ministry from "./pages/Ministry";
 import ChatApp from "./ChatApp";
 import Projects from "./pages/Projects";
@@ -17,20 +24,23 @@ import Login from "./Login";
 ----------------------------- */
 function ProtectedRoute({ children }) {
   const user = localStorage.getItem("userEmail");
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
+  if (!user) return <Navigate to="/login" replace />;
   return children;
 }
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Navbar />
+/* -----------------------------
+   Layout Wrapper (IMPORTANT)
+----------------------------- */
+function AppLayout() {
+  const location = useLocation();
+  const isChatPage = location.pathname === "/chat";
 
-      <main style={{ minHeight: "100vh" }}>
+  return (
+    <>
+      {/* Hide Navbar on Chat page */}
+      {!isChatPage && <Navbar />}
+
+      <main style={{ height: "100vh", overflow: "hidden" }}>
         <Routes>
 
           {/* Public Routes */}
@@ -38,6 +48,7 @@ function App() {
           <Route path="/allocation" element={<Allocation />} />
           <Route path="/ministry" element={<Ministry />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/comparison" element={<Comparison />} />
           <Route path="/report" element={<Report />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
@@ -52,13 +63,25 @@ function App() {
             }
           />
 
-          {/* Fallback Route */}
+          {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
 
         </Routes>
       </main>
 
-      <Footer />
+      {/* Hide Footer on Chat page */}
+      {!isChatPage && <Footer />}
+    </>
+  );
+}
+
+/* -----------------------------
+   Main App
+----------------------------- */
+function App() {
+  return (
+    <BrowserRouter>
+      <AppLayout />
     </BrowserRouter>
   );
 }

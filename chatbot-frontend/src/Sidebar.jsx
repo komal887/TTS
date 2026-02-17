@@ -15,7 +15,14 @@ export default function Sidebar({
   const [editing, setEditing] = useState(null);
   const [temp, setTemp] = useState("");
 
-  const openMenuFor = (id) => setMenuOpen((p) => (p === id ? null : id));
+  // ✅ Get username from localStorage
+  const username = localStorage.getItem("username") || "User";
+
+  const avatarLetter = username.charAt(0).toUpperCase();
+
+  const openMenuFor = (id) =>
+    setMenuOpen((p) => (p === id ? null : id));
+
   const startEdit = (id, title) => {
     setEditing(id);
     setTemp(title);
@@ -28,6 +35,7 @@ export default function Sidebar({
         <button className="new-chat" onClick={onNew}>
           <Plus size={14} /> New chat
         </button>
+
         <button className="close-sidebar" onClick={toggle}>
           <X size={18} />
         </button>
@@ -36,6 +44,7 @@ export default function Sidebar({
       <nav className="sidebar-list">
         {chats.map((c) => {
           const active = c.id === activeChatId;
+
           return (
             <div
               key={c.id}
@@ -47,6 +56,7 @@ export default function Sidebar({
             >
               <div className="left">
                 <div className="dot" />
+
                 {editing === c.id ? (
                   <input
                     className="rename-input"
@@ -90,10 +100,12 @@ export default function Sidebar({
                     >
                       <Edit2 size={14} /> Rename
                     </button>
+
                     <button
                       className="menu-item"
                       onClick={() => {
-                        if (confirm("Delete this chat?")) onDelete(c.id);
+                        if (window.confirm("Delete this chat?"))
+                          onDelete(c.id);
                         setMenuOpen(null);
                       }}
                     >
@@ -107,11 +119,12 @@ export default function Sidebar({
         })}
       </nav>
 
+      {/* USER FOOTER */}
       <div className="sidebar-footer">
-        <div className="avatar">KA</div>
+        <div className="avatar">{avatarLetter}</div>
         <div className="acct">
-          <div className="name">Komal A</div>
-          <div className="sub">Go</div>
+          <div className="name">{username}</div>
+          <div className="sub">Logged In</div>
         </div>
       </div>
     </aside>

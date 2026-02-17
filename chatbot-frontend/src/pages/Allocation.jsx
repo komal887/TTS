@@ -1,12 +1,11 @@
 // src/pages/Allocation.jsx
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Chart from "chart.js/auto";
 import { jsPDF } from "jspdf";
 
 import "../styles/allocation.css";
 import "../styles/home.css";
-import "../styles/navbar.css";
 
 const DATA_PATH = "/data/output_json_improved_full/all_demands_improved_full.json";
 const PER_DEMAND_PATH_PREFIX = "/data/output_json_improved_full/DEMAND_";
@@ -144,23 +143,19 @@ export default function Allocation() {
         ],
       },
       options: {
-      maintainAspectRatio: false,
-      cutout: "60%",
-      plugins: {
-        legend: { display: false },
+        maintainAspectRatio: false,
+        cutout: "60%",
+        plugins: {
+          legend: { display: false },
+        },
+        onClick: (evt, elements) => {
+          if (elements && elements.length > 0) {
+            const idx = elements[0].index;
+            const selectedMinistry = labels[idx];
+            navigate(`/ministry?name=${encodeURIComponent(selectedMinistry)}`);
+          }
+        },
       },
-
-      // ⭐ ADD THIS BLOCK BACK
-      onClick: (evt, elements) => {
-        if (elements && elements.length > 0) {
-          const idx = elements[0].index;
-          const selectedMinistry = labels[idx];
-          navigate(`/ministry?name=${encodeURIComponent(selectedMinistry)}`);
-        }
-      },
-    },
-
-      
     });
 
     return () => chartInstance.current?.destroy();
@@ -215,132 +210,6 @@ export default function Allocation() {
     setCurrentLevel(level);
   }
 
-  // ---------------- EXPORT FIXED VERSION ----------------
-  async function downloadChart(format = "png") {
-    try {
-      if (!canvasRef.current || !chartInstance.current) return;
-
-      setDropdownOpen(false);
-      await new Promise((r) => setTimeout(r, 150));
-
-      const exportW = 1300;
-      const exportH = 900;
-      const headerH = 120;
-
-      const exportCanvas = document.createElement("canvas");
-      exportCanvas.width = exportW;
-      exportCanvas.height = exportH;
-      const ctx = exportCanvas.getContext("2d");
-
-      ctx.fillStyle = "#fff";
-      ctx.fillRect(0, 0, exportW, exportH);
-
-      const dateStr = new Date().toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
-
-      ctx.fillStyle = "#004aad";
-      ctx.font = "bold 30px Inter";
-      ctx.fillText("Tax Transparency System — Allocation Report", 40, 50);
-
-      ctx.fillStyle = "#0b4f6c";
-      ctx.font = "600 20px Inter";
-      ctx.fillText(levelTitle, 40, 90);
-
-      ctx.fillStyle = "#475569";
-      ctx.font = "16px Inter";
-      ctx.fillText(`Fiscal Year: 2025–26`, 40, 118);
-      ctx.fillText(`Generated on: ${dateStr}`, 260, 118);
-
-      // insert chart
-      const img = new Image();
-      img.src = canvasRef.current.toDataURL("image/png");
-      img.onload = () => {
-        ctx.drawImage(img, 40, headerH, 600, 600);
-
-        drawLegend();
-        finalize();
-      };
-
-      const drawLegend = () => {
-        const L = chartInstance.current.data.labels;
-        const V = chartInstance.current.data.datasets[0].data;
-        const C = chartInstance.current.data.datasets[0].backgroundColor;
-        const total = V.reduce((a, b) => a + b, 0);
-
-        ctx.fillStyle = "#004aad";
-        ctx.font = "bold 20px Inter";
-        ctx.fillText("Top Allocations", 700, 160);
-
-        let y = 210;
-        const cap = Math.min(L.length, 12);
-        for (let i = 0; i < cap; i++) {
-          ctx.fillStyle = C[i];
-          ctx.fillRect(700, y - 12, 14, 14);
-
-          ctx.fillStyle = "#0b4f6c";
-          ctx.font = "16px Inter";
-          ctx.fillText(L[i], 720, y);
-
-          ctx.fillStyle = "#64748b";
-          ctx.font = "14px Inter";
-          ctx.fillText(`₹${V[i].toLocaleString()} • ${((V[i]/total)*100).toFixed(2)}%`, 720, y + 18);
-
-          y += 40;
-        }
-      };
-
-      function finalize() {
-        const file = `Allocation_${levelTitle.replace(/\s+/g, "_")}_${dateStr}`;
-
-        // PNG
-        if (format === "png") {
-          const link = document.createElement("a");
-          link.download = `${file}.png`;
-          link.href = exportCanvas.toDataURL("image/png");
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-          return;
-        }
-
-        // PDF
-        if (format === "pdf") {
-          const pdf = new jsPDF("l", "mm", "a3");
-          pdf.addImage(exportCanvas.toDataURL("image/png"), "PNG", 0, 0, 420, 297);
-          pdf.save(`${file}.pdf`);
-          return;
-        }
-
-        // SVG
-        if (format === "svg") {
-          const svg = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="${exportW}" height="${exportH}">
-              <image href="${exportCanvas.toDataURL("image/png")}" width="1300" height="900"/>
-            </svg>`;
-
-          const blob = new Blob([svg], { type: "image/svg+xml" });
-          const url = URL.createObjectURL(blob);
-
-          const link = document.createElement("a");
-          link.download = `${file}.svg`;
-          link.href = url;
-          document.body.appendChild(link);
-          link.click();
-
-          setTimeout(() => {
-            link.remove();
-            URL.revokeObjectURL(url);
-          }, 250);
-        }
-      }
-    } catch (e) {
-      console.error("export error:", e);
-    }
-  }
-
   // ---------------- Legend ----------------
   function Legend() {
     const total = values.reduce((a, b) => a + b, 0);
@@ -363,40 +232,6 @@ export default function Allocation() {
 
   return (
     <div className="allocation-wrapper">
-      <header className="navbar">
-        <div className="nav-left">
-          <div className="nav-logo">
-            <span className="nav-crest">₹</span>
-            <h1 className="nav-title">Tax Transparency System</h1>
-          </div>
-        </div>
-
-        <button
-          className="menu-toggle"
-          aria-label="Toggle Menu"
-          onClick={() => {
-            const el = document.getElementById("navbarLinks");
-            el?.classList.toggle("active");
-          }}
-        >
-          <i className="fas fa-bars"></i>
-        </button>
-
-        <nav className="navbar-links" id="navbarLinks">
-          <Link to="/">Home</Link>
-          <Link to="/allocation" className="active">Allocation</Link>
-          <Link to="/calculation">Calculation</Link>
-          <Link to="/report">Reports</Link>
-          <Link to="/comparison">Comparison</Link>
-        </nav>
-
-        <div className="nav-right">
-          <button className="back-btn" onClick={() => navigate(-1)} title="Go Back">
-            <i className="fas fa-arrow-left"></i>
-          </button>
-        </div>
-      </header>
-
       <main className="main">
         <section className="viz-container">
           <div className="chart-section">
@@ -412,23 +247,16 @@ export default function Allocation() {
                     setDropdownOpen((s) => !s);
                   }}
                 >
-                  <i className="fas fa-download"></i> Download
-                  <i className="fas fa-chevron-down"></i>
+                  Download
                 </button>
 
                 <div
                   className={`dropdown-options ${dropdownOpen ? "show" : ""}`}
                   ref={dropdownRef}
                 >
-                  <button type="button" onClick={() => downloadChart("png")}>
-                    <i className="fas fa-image"></i> PNG
-                  </button>
-                  <button type="button" onClick={() => downloadChart("pdf")}>
-                    <i className="fas fa-file-pdf"></i> PDF
-                  </button>
-                  <button type="button" onClick={() => downloadChart("svg")}>
-                    <i className="fas fa-draw-polygon"></i> SVG
-                  </button>
+                  <button type="button" onClick={() => downloadChart("png")}>PNG</button>
+                  <button type="button" onClick={() => downloadChart("pdf")}>PDF</button>
+                  <button type="button" onClick={() => downloadChart("svg")}>SVG</button>
                 </div>
               </div>
             </div>
@@ -459,23 +287,6 @@ export default function Allocation() {
           </aside>
         </section>
       </main>
-
-      <footer className="footer">
-        <div className="footer-content">
-          <p>
-            <strong>Tax Transparency System (TTS)</strong> — A citizen initiative for budget visibility and accountability.
-          </p>
-
-          <p className="footer-links">
-            <Link to="/report">Official Reports</Link> |
-            <a href="https://www.indiabudget.gov.in" target="_blank" rel="noreferrer">
-              Union Budget Portal
-            </a> | <Link to="/about">About</Link> | <Link to="/contact">Contact</Link>
-          </p>
-
-          <small>© 2025 Tax Transparency System. All data sources belong to the Ministry of Finance.</small>
-        </div>
-      </footer>
     </div>
   );
 }

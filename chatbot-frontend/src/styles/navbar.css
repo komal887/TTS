@@ -1,13 +1,16 @@
 /* ================= NAVBAR ================= */
 
 .navbar {
+  width: 100%;
+  height: 72px;
+  padding: 0 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
-  height: 72px;
-  background: linear-gradient(90deg, #ffffff, #eef4ff);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -27,7 +30,7 @@
 }
 
 .nav-crest {
-  font-size: 24px;
+  font-size: 22px;
   padding: 6px 10px;
   border-radius: 8px;
   background: #e0ecff;
@@ -45,12 +48,11 @@
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 28px;
 }
 
 .navbar-links a {
-  text-decoration: none;
-  color: #1e293b;
+  color: #334155;
   font-weight: 600;
   font-size: 14px;
   transition: 0.2s ease;
@@ -58,37 +60,35 @@
 
 .navbar-links a:hover,
 .navbar-links a.active {
-  color: #0b5ed7;
+  color: #004aad;
 }
 
 /* LOGOUT BUTTON */
 .logout-btn {
-  background: #c0392b;
+  background: #dc2626;
   color: white;
-  border: none;
   padding: 8px 14px;
   border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s ease;
 }
 
 .logout-btn:hover {
-  background: #a93226;
-}
-
-/* HAMBURGER */
-.menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 26px;
-  color: #004aad;
-  cursor: pointer;
+  background: #b91c1c;
 }
 
 /* MOBILE */
+.menu-toggle {
+  display: none;
+  background: none;
+  font-size: 24px;
+  color: #004aad;
+}
+
+/* RESPONSIVE */
 @media (max-width: 900px) {
+
+  .navbar {
+    padding: 0 20px;
+  }
 
   .menu-toggle {
     display: block;
@@ -100,56 +100,22 @@
     left: 0;
     width: 100%;
     flex-direction: column;
-    background: white;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    background: #ffffff;
     padding: 0;
     max-height: 0;
     overflow: hidden;
-    opacity: 0;
-    transition: all 0.3s ease;
+    transition: 0.3s ease;
   }
 
   .navbar-links.active {
     max-height: 400px;
-    opacity: 1;
     padding: 12px 0;
   }
 
   .navbar-links a,
   .logout-btn {
     width: 100%;
-    text-align: left;
     padding: 14px 20px;
-  }
-}
-
-/* FLOATING BACK BUTTON */
-.floating-back {
-  display: none;
-}
-
-@media (max-width: 900px) {
-  .floating-back {
-    display: flex;
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
-    width: 54px;
-    height: 54px;
-    border: none;
-    border-radius: 50%;
-    background: linear-gradient(90deg, #0b5ed7, #004aad);
-    color: #fff;
-    font-size: 20px;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1500;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-    transition: 0.25s ease;
-  }
-
-  .floating-back:hover {
-    transform: translateY(-4px);
+    text-align: left;
   }
 }
